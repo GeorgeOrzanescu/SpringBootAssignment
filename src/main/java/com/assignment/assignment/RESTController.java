@@ -18,20 +18,18 @@ public class RESTController {
 
 
     private int checkUrl(String url) {
-        ArrayList<Link> links = (ArrayList<Link>)linkRepository.findAll();
-        System.out.println(links.size());
+        ArrayList<Link> links = (ArrayList<Link>) linkRepository.findAll();
         boolean isPresent = false;
         int indexPresent = 0;
-        for(Link link : links) {
-            if(link.getLongAddress().equals("https://" + url)) {
+        for (Link link : links) {
+            if (link.getLongAddress().equals("https://" + url)) {
                 isPresent = true;
                 indexPresent = links.indexOf(link);
             }
         }
-        if(isPresent) {
+        if (isPresent) {
             return indexPresent;
-        }
-        else {
+        } else {
             return -1;
         }
     }
@@ -41,26 +39,24 @@ public class RESTController {
         List<String> generatedLinks = new ArrayList<>();
         for (Map.Entry<String, String> entry : values.entrySet()) {
 
-                int index = checkUrl(entry.getValue());
-                 if(index == -1) {
-                     String shortAddress = "http://localhost:9003/" + Long.toString(linkRepository.count()+1);
-                     Link link = new Link(entry.getValue(),shortAddress);
-                     linkRepository.save(link);
-                     generatedLinks.add(shortAddress);
-                 }
-                 else {
-                     generatedLinks.add("http://localhost:9003/" + Long.toString(index));
-                 }
+            int index = checkUrl(entry.getValue());
+            if (index == -1) {
+                String shortAddress = "http://localhost:9003/" + Long.toString(linkRepository.count() + 1);
+                Link link = new Link("https://" + entry.getValue(), shortAddress);
+                linkRepository.save(link);
+                generatedLinks.add(shortAddress);
+            } else {
+                generatedLinks.add("http://localhost:9003/" + Long.toString(index + 1));
+            }
         }
         return generatedLinks;
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getLink(@PathVariable Integer id) {
-        if(id > linkRepository.count() || id <= 0) {
+        if (id > linkRepository.count() || id <= 0) {
             return new ResponseEntity("No such link", HttpStatus.NOT_FOUND);
-        }
-        else{
+        } else {
             HttpHeaders headers = new HttpHeaders();
             headers.set("Location", linkRepository.findById(Long.valueOf(id)).get().getLongAddress());
             ResponseEntity<?> responseEntity = new ResponseEntity<>(headers, HttpStatus.PERMANENT_REDIRECT);
