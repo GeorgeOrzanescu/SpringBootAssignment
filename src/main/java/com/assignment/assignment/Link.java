@@ -15,11 +15,16 @@ public class Link {
         this.shortAddress = shortAddress;
     }
 
+
     public String getLongAddress() {
         return longAddress;
     }
     public String getShortAddress() {
         return shortAddress;
+    }
+
+    public long getId() {
+        return id;
     }
 
 }
