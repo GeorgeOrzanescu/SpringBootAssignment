@@ -16,16 +16,14 @@ public class RESTController {
     @Autowired
     private LinkRepository linkRepository;
 
-
     // HELPER METHODS
     private int getLastId() {
-        ArrayList<Link> links = (ArrayList<Link>)linkRepository.findAll();
+        ArrayList<Link> links = (ArrayList<Link>) linkRepository.findAll();
         if (links.size() == 0) {
             return 0;
         }
-        return (int)links.get(links.size() - 1).getId();
+        return (int) links.get(links.size() - 1).getId();
     }
-
 
     private int checkUrl(String url) {
         ArrayList<Link> links = (ArrayList<Link>) linkRepository.findAll();
@@ -34,7 +32,7 @@ public class RESTController {
         for (Link link : links) {
             if (link.getLongAddress().equals("https://" + url)) {
                 isPresent = true;
-                indexPresent = (int)link.getId();
+                indexPresent = (int) link.getId();
             }
         }
         if (isPresent) {
@@ -51,7 +49,7 @@ public class RESTController {
         for (Map.Entry<String, String> entry : values.entrySet()) {
 
             int index = checkUrl(entry.getValue());
-            if (linkRepository.count() == 0) {  // if there are no links in the database
+            if (linkRepository.count() == 0) { // if there are no links in the database
                 String shortAddress = "http://localhost:9003/" + Integer.toString(1);
                 Link link = new Link("https://" + entry.getValue(), shortAddress);
                 linkRepository.save(link);
@@ -62,7 +60,7 @@ public class RESTController {
                 Link link = new Link("https://" + entry.getValue(), shortAddress);
                 linkRepository.save(link);
                 generatedLinks.add(shortAddress);
-            } else {  // if the link is present in the database
+            } else { // if the link is present in the database
                 generatedLinks.add("http://localhost:9003/" + Long.toString(index));
             }
         }
